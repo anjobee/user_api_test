@@ -18,6 +18,9 @@ const service = (db) => {
         users: userList,
         count: userList.length
       }
+    },
+    delete: async (id) => {
+      await query('DELETE FROM users WHERE id = ?', [id])
     }
   }
 

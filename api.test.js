@@ -37,8 +37,7 @@ describe('API', () => {
       await query('INSERT INTO users SET ?', data)
       await query('INSERT INTO users SET ?', data)
       const response = await request(app).get('/getAll');
-      const users = await query('SELECT * FROM users')
-      console.log(users)
+      const users = await query('SELECT * FROM users');
       expect(response.statusCode).toBe(200);
       expect(response.body).toEqual({ users, count: 3 });
     });
@@ -65,19 +64,29 @@ describe('API', () => {
         user: userData
       });
     });
+  });
 
-    // test('returns a 400 error if the name is missing', async () => {
-    //   const data = { age: 30 };
-    //   const response = await request(app).post('/').send(data);
-    //   expect(response.statusCode).toBe(400);
-    //   expect(response.body).toEqual({ error: 'Name is required' });
-    // });
+  describe('DELETE /delete', () => {
+    test('/delete/id should delete a user', async () => {
+      const data = {
+        "email": "test@mail.com",
+        "username": "username",
+        "password": "password123",
+        "firstName": "Test",
+        "lastName": "User",
+        "address": "Sample Address",
+        "postcode": "1234",
+        "contactNo": "091351363"
+      }
 
-    // test('returns a 400 error if the age is missing', async () => {
-    //   const data = { name: 'Alice' };
-    //   const response = await request(app).post('/').send(data);
-    //   expect(response.statusCode).toBe(400);
-    //   expect(response.body).toEqual({ error: 'Age is required' });
-    // });
+      await query('INSERT INTO users SET ?', data)
+      await query('INSERT INTO users SET ?', data)
+      await query('INSERT INTO users SET ?', data)
+      const response = await request(app).delete(`/delete/1`);
+      const users = await query('SELECT * FROM users');
+      expect(response.statusCode).toBe(200);
+      expect(users.length).toEqual(2);
+      expect(response.body).toEqual({ message: 'User deletion successful' });
+    });
   });
 });

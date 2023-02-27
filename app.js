@@ -34,6 +34,20 @@ const setup = (db) => {
     }
   });
 
+  app.delete('/delete/:id', async (req, res) => {
+    const { id } = req.params
+    console.log(id)
+    try {
+      await userService.delete(id)
+      res.status(200).json({ message: 'User deletion successful' });
+    } catch (err) {
+      console.log(err);
+      return res
+        .status(500)
+        .json({ message: 'Deletion of user failed - please try again later.' });
+    }
+  });
+
   return app;
 }
 

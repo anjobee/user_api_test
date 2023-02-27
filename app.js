@@ -22,6 +22,18 @@ const setup = (db) => {
     }
   });
 
+  app.get('/getAll', async (req, res) => {
+    try {
+      const response = await userService.getAll(req.body)
+      res.status(200).json(response);
+    } catch (err) {
+      console.log(err);
+      return res
+        .status(500)
+        .json({ message: 'Listing of all users failed - please try again later.' });
+    }
+  });
+
   return app;
 }
 

@@ -6,8 +6,6 @@ const app = require('./app')(db.connection);
 let server
 let query
 beforeAll(() => {
-  db.dropTable()
-  db.createTable()
   query = util.promisify(db.connection.query).bind(db.connection)
   server = app.listen(8080);
 })
@@ -17,17 +15,37 @@ afterAll(async () => {
   await server.close()
 })
 
-describe('API', () => {
-  // describe('GET /', () => {
-  //   test('should return a user object', async () => {
-  //     const response = await request(app).get('/');
-  //     expect(response.statusCode).toBe(200);
-  //     expect(response.body).toEqual({ message: 'Hello, world!' });
-  //   });
-  // });
+beforeEach(() => {
+  db.dropTable()
+  db.createTable()
+})
 
-  describe('POST /', () => {
-    test('should returns a newly created user object', async () => {
+describe('API', () => {
+  describe('GET /getAll', () => {
+    test('should return all users', async () => {
+      const data = {
+        "email": "test@mail.com",
+        "username": "username",
+        "password": "password123",
+        "firstName": "Test",
+        "lastName": "User",
+        "address": "Sample Address",
+        "postcode": "1234",
+        "contactNo": "091351363"
+      }
+      await query('INSERT INTO users SET ?', data)
+      await query('INSERT INTO users SET ?', data)
+      await query('INSERT INTO users SET ?', data)
+      const response = await request(app).get('/getAll');
+      const users = await query('SELECT * FROM users')
+      console.log(users)
+      expect(response.statusCode).toBe(200);
+      expect(response.body).toEqual({ users, count: 3 });
+    });
+  });
+
+  describe('POST /create', () => {
+    test('should return a newly created user object', async () => {
       const data = {
         "email": "test@mail.com",
         "username": "username",

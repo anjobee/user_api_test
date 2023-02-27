@@ -111,4 +111,37 @@ describe('API', () => {
       expect(response.body).toEqual({ message: 'Multiple user deletion successful' });
     });
   });
+
+  describe('PATCH /edit/id', () => {
+    test('should update a user', async () => {
+      const data = {
+        "email": "test@mail.com",
+        "username": "username",
+        "password": "password123",
+        "firstName": "Test",
+        "lastName": "User",
+        "address": "Sample Address",
+        "postcode": "1234",
+        "contactNo": "091351363"
+      }
+
+      const updatedData = {
+        "email": "updated@mail.com",
+        "username": "updated",
+        "password": "password456",
+        "firstName": "Updated",
+        "lastName": "Test",
+        "address": "Updated Address",
+        "postcode": "5678",
+        "contactNo": "123456678910"
+      }
+
+      await query('INSERT INTO users SET ?', data)
+
+      const response = await request(app).patch(`/edit/1`).send(updatedData);
+      const [ user ] = await query('SELECT * FROM users WHERE id = ?', [1]);
+      expect(response.statusCode).toBe(200);
+      expect(response.body).toEqual({ message: 'User detail updated', user });
+    });
+  });
 });

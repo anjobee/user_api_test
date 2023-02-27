@@ -24,6 +24,25 @@ const service = (db) => {
     },
     deleteMany: async (ids) => {
       await query('DELETE FROM users WHERE id IN (?)', [ids])
+    },
+    edit: async (id, updateDetails) => {
+      let updateQuery = 'UPDATE users SET ';
+      const values = [];
+
+      Object.keys(updateDetails).forEach(key => {
+        if (updateDetails[key]) {
+          updateQuery += `${key} = ?, `;
+          values.push(updateDetails[key]);
+        }
+      });
+
+      updateQuery = updateQuery.slice(0, -2);
+      updateQuery += ` WHERE id = ${id}`;
+
+      await query(updateQuery, values)
+      const [ user ] = await query('SELECT * FROM users WHERE id = ?', [id])
+
+      return user
     }
   }
 

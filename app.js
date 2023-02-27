@@ -60,6 +60,19 @@ const setup = (db) => {
     }
   });
 
+  app.patch('/edit/:id', async (req, res) => {
+    const { id } = req.params
+    try {
+      const user = await userService.edit(id, req.body)
+      res.status(200).json({ message: 'User detail updated', user });
+    } catch (err) {
+      console.log(err);
+      return res
+        .status(500)
+        .json({ message: 'Editing of user failed - please try again later.' });
+    }
+  });
+
   return app;
 }
 

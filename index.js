@@ -1,4 +1,4 @@
-const { connection } = require('./db')('test_db')
+const { connection } = require('./db')('user_api_db')
 
 process.on('SIGINT', () => {
   console.log('Closing MySQL connection...');

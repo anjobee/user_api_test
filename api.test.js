@@ -88,5 +88,27 @@ describe('API', () => {
       expect(users.length).toEqual(2);
       expect(response.body).toEqual({ message: 'User deletion successful' });
     });
+
+    test('/delete should delete multiple users', async () => {
+      const data = {
+        "email": "test@mail.com",
+        "username": "username",
+        "password": "password123",
+        "firstName": "Test",
+        "lastName": "User",
+        "address": "Sample Address",
+        "postcode": "1234",
+        "contactNo": "091351363"
+      }
+
+      await query('INSERT INTO users SET ?', data)
+      await query('INSERT INTO users SET ?', data)
+      await query('INSERT INTO users SET ?', data)
+      const response = await request(app).delete(`/delete`).send({ ids: [1, 2, 3] });
+      const users = await query('SELECT * FROM users');
+      expect(response.statusCode).toBe(200);
+      expect(users.length).toEqual(0);
+      expect(response.body).toEqual({ message: 'Multiple user deletion successful' });
+    });
   });
 });

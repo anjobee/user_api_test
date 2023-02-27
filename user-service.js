@@ -21,6 +21,9 @@ const service = (db) => {
     },
     delete: async (id) => {
       await query('DELETE FROM users WHERE id = ?', [id])
+    },
+    deleteMany: async (ids) => {
+      await query('DELETE FROM users WHERE id IN (?)', [ids])
     }
   }
 

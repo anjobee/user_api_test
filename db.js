@@ -20,8 +20,8 @@ const dbSetup = (dbName) => {
       firstName VARCHAR(50) NOT NULL,
       lastName VARCHAR(50) NOT NULL,
       address VARCHAR(50) NOT NULL,
-      postcode VARCHAR(4) NOT NULL,
-      contactNo VARCHAR(13) NOT NULL,
+      postcode VARCHAR(10) NOT NULL,
+      contactNo VARCHAR(50) NOT NULL,
       PRIMARY KEY (id)
       )`
     );

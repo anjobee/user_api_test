@@ -2,6 +2,7 @@ const db = require('./db')('jest_db');
 const util = require('util');
 const request = require('supertest');
 const app = require('./app')(db.connection);
+const userGenerator = require('./seeder/user-generator');
 
 let server
 let query
@@ -11,6 +12,7 @@ beforeAll(() => {
 })
 
 afterAll(async () => {
+  db.dropTable()
   db.connection.end()
   await server.close()
 })
@@ -23,19 +25,10 @@ beforeEach(() => {
 describe('API', () => {
   describe('GET /getAll', () => {
     test('should return all users', async () => {
-      const data = {
-        "email": "test@mail.com",
-        "username": "username",
-        "password": "password123",
-        "firstName": "Test",
-        "lastName": "User",
-        "address": "Sample Address",
-        "postcode": "1234",
-        "contactNo": "091351363"
-      }
-      await query('INSERT INTO users SET ?', data)
-      await query('INSERT INTO users SET ?', data)
-      await query('INSERT INTO users SET ?', data)
+      const dummyUsers = userGenerator(3)
+      await query('INSERT INTO users SET ?', dummyUsers[0])
+      await query('INSERT INTO users SET ?', dummyUsers[1])
+      await query('INSERT INTO users SET ?', dummyUsers[2])
       const response = await request(app).get('/getAll');
       const users = await query('SELECT * FROM users');
       expect(response.statusCode).toBe(200);
@@ -45,19 +38,9 @@ describe('API', () => {
 
   describe('POST /create', () => {
     test('should return a newly created user object', async () => {
-      const data = {
-        "email": "test@mail.com",
-        "username": "username",
-        "password": "password123",
-        "firstName": "Test",
-        "lastName": "User",
-        "address": "Sample Address",
-        "postcode": "1234",
-        "contactNo": "091351363"
-    }
-
-      const response = await request(app).post('/create').send(data);
-      const [ userData ] = await query('SELECT * FROM users WHERE email = ?', ['test@mail.com'])
+      const [ userDetails ] = userGenerator(1)
+      const response = await request(app).post('/create').send(userDetails);
+      const [ userData ] = await query('SELECT * FROM users WHERE email = ?', [userDetails.email])
       expect(response.statusCode).toBe(201);
       expect(response.body).toEqual({
         message: 'User creation successful.',
@@ -68,20 +51,10 @@ describe('API', () => {
 
   describe('DELETE /delete', () => {
     test('/delete/id should delete a user', async () => {
-      const data = {
-        "email": "test@mail.com",
-        "username": "username",
-        "password": "password123",
-        "firstName": "Test",
-        "lastName": "User",
-        "address": "Sample Address",
-        "postcode": "1234",
-        "contactNo": "091351363"
-      }
-
-      await query('INSERT INTO users SET ?', data)
-      await query('INSERT INTO users SET ?', data)
-      await query('INSERT INTO users SET ?', data)
+      const dummyUsers = userGenerator(3)
+      await query('INSERT INTO users SET ?', dummyUsers[0])
+      await query('INSERT INTO users SET ?', dummyUsers[1])
+      await query('INSERT INTO users SET ?', dummyUsers[2])
       const response = await request(app).delete(`/delete/1`);
       const users = await query('SELECT * FROM users');
       expect(response.statusCode).toBe(200);
@@ -90,20 +63,10 @@ describe('API', () => {
     });
 
     test('/delete should delete multiple users', async () => {
-      const data = {
-        "email": "test@mail.com",
-        "username": "username",
-        "password": "password123",
-        "firstName": "Test",
-        "lastName": "User",
-        "address": "Sample Address",
-        "postcode": "1234",
-        "contactNo": "091351363"
-      }
-
-      await query('INSERT INTO users SET ?', data)
-      await query('INSERT INTO users SET ?', data)
-      await query('INSERT INTO users SET ?', data)
+      const dummyUsers = userGenerator(3)
+      await query('INSERT INTO users SET ?', dummyUsers[0])
+      await query('INSERT INTO users SET ?', dummyUsers[1])
+      await query('INSERT INTO users SET ?', dummyUsers[2])
       const response = await request(app).delete(`/delete`).send({ ids: [1, 2, 3] });
       const users = await query('SELECT * FROM users');
       expect(response.statusCode).toBe(200);
@@ -114,27 +77,9 @@ describe('API', () => {
 
   describe('PATCH /edit/id', () => {
     test('should update a user', async () => {
-      const data = {
-        "email": "test@mail.com",
-        "username": "username",
-        "password": "password123",
-        "firstName": "Test",
-        "lastName": "User",
-        "address": "Sample Address",
-        "postcode": "1234",
-        "contactNo": "091351363"
-      }
+      const [ data ] = userGenerator(1)
 
-      const updatedData = {
-        "email": "updated@mail.com",
-        "username": "updated",
-        "password": "password456",
-        "firstName": "Updated",
-        "lastName": "Test",
-        "address": "Updated Address",
-        "postcode": "5678",
-        "contactNo": "123456678910"
-      }
+      const [ updatedData ] = userGenerator(1)
 
       await query('INSERT INTO users SET ?', data)
 

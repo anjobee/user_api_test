@@ -11,7 +11,7 @@ const dbSetup = (dbName) => {
     console.log(`Connected to ${dbName}`)
   });
 
-  const createTable = () => {
+  const createTable = (cb) => {
     connection.query(`CREATE TABLE IF NOT EXISTS users(
       id INT(11) NOT NULL AUTO_INCREMENT,
       email VARCHAR(50) NOT NULL,
@@ -24,11 +24,11 @@ const dbSetup = (dbName) => {
       contactNo VARCHAR(50) NOT NULL,
       PRIMARY KEY (id)
       )`
-    );
+    , cb);
   }
 
-  const dropTable = () => {
-    connection.query('DROP TABLE IF EXISTS users');
+  const dropTable = (cb) => {
+    connection.query('DROP TABLE IF EXISTS users', cb);
   }
 
   createTable();

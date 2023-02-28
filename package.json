@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "jest --detectOpenHandles",
-    "seed": "node ./seeder/user-seeder.js"
+    "seed": "node ./seeder/user-seeder.js",
+    "migrate": "node ./seeder/migration.js"
   },
   "keywords": [],
   "author": "",

@@ -8,6 +8,11 @@ ___
 
 #### Run `npm install` or `npm i`
 
+## Migrating
+___
+
+#### Run `npm run migrate` to create users table
+#### Run `npm run migrate down` to drop users table
 ## Testing
 ___
 
